@@ -1,38 +1,54 @@
-public class Personaje {
-    // Malas prácticas: Variables de una letra, sin encapsular (private) y todo mezclado.
-    String n;
-    int v;
-    int niv;
-    int t; // Tipo: 1 = Guerrero, 2 = Mago
-    int energiaExtra; // Mezcla de furia y mana en una sola variable
+/**
+ * Clase base que representa a un personaje del juego.
+ * Guerrero y Mago heredan de esta clase.
+ */
+public abstract class Personaje {
 
-    // Constructor sin documentar y con parámetros incomprensibles
-    public Personaje(String a, int b, int c, int d, int e) {
-        n = a;
-        v = b;
-        niv = c;
-        t = d;
-        energiaExtra = e;
+    private String nombre;
+    private int vida;
+    private int vidaMaxima;
+    private int nivel;
+    private Arma arma;
+
+    /**
+     * @param nombre Nombre del personaje
+     * @param vida   Vida inicial (también será la vida máxima)
+     * @param nivel  Nivel del personaje
+     */
+    public Personaje(String nombre, int vida, int nivel) {
+        this.nombre = nombre;
+        this.vida = vida;
+        this.vidaMaxima = vida;
+        this.nivel = nivel;
     }
 
-    // Método espagueti: mezcla la lógica de guerreros y magos en el mismo sitio
-    public void atacar(Personaje enemigo) {
-        int d = 0;
-        if (this.t == 1) {
-            d = this.niv * 2;
-        } else if (this.t == 2) {
-            d = this.niv + this.energiaExtra;
-        }
-        enemigo.recibirDano(d);
-    }
+    /**
+     * Cada subclase define cómo ataca.
+     * @param enemigo El personaje que recibe el daño
+     */
+    public abstract void atacar(Personaje enemigo);
 
-    // BUG CRÍTICO (Para la Fase 3): La vida puede bajar a números negativos
+    /**
+     * Reduce la vida del personaje. Nunca baja de 0.
+     * @param dano Cantidad de daño recibido
+     */
     public void recibirDano(int dano) {
-        this.v = this.v - dano;
+        this.vida = this.vida - dano;
+        if (this.vida < 0) {
+            this.vida = 0;
+        }
     }
 
-    // Método para JUnit
-    public int getVida() {
-        return this.v;
+    // Getters y Setters
+    public String getNombre()       { return nombre; }
+    public int getVida()            { return vida; }
+    public int getVidaMaxima()      { return vidaMaxima; }
+    public int getNivel()           { return nivel; }
+    public Arma getArma()           { return arma; }
+    public void setArma(Arma arma)  { this.arma = arma; }
+
+    @Override
+    public String toString() {
+        return nombre + " | Vida: " + vida + "/" + vidaMaxima + " | Nivel: " + nivel;
     }
 }
